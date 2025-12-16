@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Montserrat, Syne } from "next/font/google";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import NextTopLoader from "nextjs-toploader";
 import "./globals.css";
 import { ThemeProvider } from "@/contexts/theme-context";
 
@@ -83,6 +84,19 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${montserrat.variable} ${syne.variable} antialiased`}
       >
+        <NextTopLoader
+          color="#9333ea"
+          initialPosition={0.08}
+          crawlSpeed={200}
+          height={3}
+          crawl={true}
+          showSpinner={true}
+          easing="ease"
+          speed={200}
+          shadow="0 0 10px #9333ea,0 0 5px #9333ea"
+          zIndex={1600}
+          showAtBottom={false}
+        />
         <ThemeProvider>
           {children}
           <ToastContainer />
