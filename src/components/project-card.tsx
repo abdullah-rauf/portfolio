@@ -39,7 +39,7 @@ export function ProjectCard({
           </div>
         </div>
         <CardHeader>
-          <CardTitle className="group-hover:text-blue-600 transition-colors">
+          <CardTitle className="group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
             {title}
           </CardTitle>
           <CardDescription>{description}</CardDescription>

@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { navigation } from "@/constants/data";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { cn } from "@/lib/utils";
 
 export function Header() {
@@ -46,7 +47,7 @@ export function Header() {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden md:flex items-center space-x-4">
             {navigation.map((item) => (
               <Link
                 key={item.name}
@@ -61,6 +62,7 @@ export function Header() {
                 {item.name}
               </Link>
             ))}
+            <ThemeToggle />
             <Button size="sm" asChild>
               <Link href="/contact">Get in Touch</Link>
             </Button>
@@ -100,6 +102,12 @@ export function Header() {
                   {item.name}
                 </Link>
               ))}
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Theme
+                </span>
+                <ThemeToggle />
+              </div>
               <Button size="sm" className="w-full" asChild>
                 <Link href="/contact" onClick={() => setIsOpen(false)}>
                   Get in Touch

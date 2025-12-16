@@ -10,8 +10,10 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { personalInfo } from "@/constants/data";
+import { useTheme } from "@/contexts/theme-context";
 
 export function Contact() {
+  const { theme } = useTheme();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -42,7 +44,7 @@ export function Contact() {
           closeOnClick: true,
           pauseOnHover: true,
           draggable: true,
-          theme: "dark",
+          theme: theme === "dark" ? "dark" : "light",
         });
         setFormData({ name: "", email: "", message: "" });
       } else {
@@ -53,7 +55,7 @@ export function Contact() {
           closeOnClick: true,
           pauseOnHover: true,
           draggable: true,
-          theme: "dark",
+          theme: theme === "dark" ? "dark" : "light",
         });
       }
     } catch (error) {
@@ -64,7 +66,7 @@ export function Contact() {
         closeOnClick: true,
         pauseOnHover: true,
         draggable: true,
-        theme: "dark",
+        theme: theme === "dark" ? "dark" : "light",
       });
     } finally {
       setIsSubmitting(false);
@@ -81,7 +83,7 @@ export function Contact() {
   };
 
   return (
-    <Section id="contact" className="bg-black dark:bg-black min-h-screen">
+    <Section id="contact" className="bg-white dark:bg-black min-h-screen">
       <Container>
         <SectionHeading subtitle="Let's work together on your next project">
           Get in Touch

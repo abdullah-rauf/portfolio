@@ -5,7 +5,7 @@ import { experiences } from "@/constants/data";
 
 export function Experience() {
   return (
-    <Section id="experience" className="bg-black dark:bg-black min-h-screen">
+    <Section id="experience" className="bg-white dark:bg-black min-h-screen">
       <Container>
         <SectionHeading subtitle="My professional journey">
           Work Experience

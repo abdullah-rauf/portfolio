@@ -5,7 +5,7 @@ import { projects } from "@/constants/data";
 
 export function Projects() {
   return (
-    <Section id="projects" className="bg-black dark:bg-black min-h-screen">
+    <Section id="projects" className="bg-white dark:bg-black min-h-screen">
       <Container>
         <SectionHeading subtitle="Some of the projects I've worked on">
           Featured Projects

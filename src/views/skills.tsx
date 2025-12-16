@@ -7,7 +7,7 @@ import { skills } from "@/constants/data";
 
 export function Skills() {
   return (
-    <Section id="skills" className="bg-black dark:bg-black min-h-screen">
+    <Section id="skills" className="bg-white dark:bg-black min-h-screen">
       <Container>
         <SectionHeading subtitle="Technologies and tools I work with">
           Skills & Expertise

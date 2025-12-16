@@ -40,7 +40,7 @@ const features = [
 
 export function About() {
   return (
-    <Section id="about" className="bg-black dark:bg-black min-h-screen">
+    <Section id="about" className="bg-white dark:bg-black min-h-screen">
       <Container>
         <SectionHeading subtitle="Get to know more about me">
           About Me
