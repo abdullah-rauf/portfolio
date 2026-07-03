@@ -194,6 +194,23 @@ function buildFigure(lowDetail: boolean): Figure {
   return { points, screenStart, screenRows, screenCols };
 }
 
+// Canvas color palettes (RGB channels) per theme; light needs deeper
+// shades to stay visible on a bright background
+const palettes = {
+  dark: {
+    line: "103, 232, 249",
+    cyan: "34, 211, 238",
+    violet: "167, 139, 250",
+    green: "74, 222, 128",
+  },
+  light: {
+    line: "14, 116, 144",
+    cyan: "8, 145, 178",
+    violet: "109, 40, 217",
+    green: "22, 163, 74",
+  },
+};
+
 // Tech glyphs orbiting the figure: radius, height, speed, phase
 const glyphs = [
   { text: "</>", radius: 0.72, y: 0.45, speed: 0.00045, phase: 0 },
@@ -216,6 +233,10 @@ export default function HeroVisual() {
     const deviceMemory =
       (navigator as Navigator & { deviceMemory?: number }).deviceMemory ?? 8;
     const lowDetail = window.innerWidth < 768 || deviceMemory <= 4;
+
+    let palette = document.documentElement.classList.contains("dark")
+      ? palettes.dark
+      : palettes.light;
 
     const { points, screenStart, screenRows, screenCols } =
       buildFigure(lowDetail);
@@ -308,7 +329,7 @@ export default function HeroVisual() {
         const pb = projected[b];
         const facing = (pa.z + pb.z) / 2;
         const alpha = 0.05 + Math.max(0, facing) * 0.3;
-        ctx.strokeStyle = `rgba(103, 232, 249, ${alpha})`;
+        ctx.strokeStyle = `rgba(${palette.line}, ${alpha})`;
         ctx.beginPath();
         ctx.moveTo(pa.x, pa.y);
         ctx.lineTo(pb.x, pb.y);
@@ -337,7 +358,7 @@ export default function HeroVisual() {
           const lit = rowLit || (isCursorRow && col <= litCols);
           const alpha = lit ? 0.95 : 0.2 + t * 0.2;
           const size = lit ? 1.7 : 0.9;
-          ctx.fillStyle = `rgba(74, 222, 128, ${alpha})`;
+          ctx.fillStyle = `rgba(${palette.green}, ${alpha})`;
           ctx.beginPath();
           ctx.arc(p.x, p.y, size, 0, Math.PI * 2);
           ctx.fill();
@@ -346,8 +367,8 @@ export default function HeroVisual() {
           const alpha = 0.25 + t * 0.65;
           ctx.fillStyle =
             i % 3 === 0
-              ? `rgba(167, 139, 250, ${alpha})`
-              : `rgba(34, 211, 238, ${alpha})`;
+              ? `rgba(${palette.violet}, ${alpha})`
+              : `rgba(${palette.cyan}, ${alpha})`;
           ctx.beginPath();
           ctx.arc(p.x, p.y, size, 0, Math.PI * 2);
           ctx.fill();
@@ -364,8 +385,8 @@ export default function HeroVisual() {
         glowSrc.y,
         scale * 0.3
       );
-      glowGrad.addColorStop(0, "rgba(74, 222, 128, 0.08)");
-      glowGrad.addColorStop(1, "rgba(74, 222, 128, 0)");
+      glowGrad.addColorStop(0, `rgba(${palette.green}, 0.08)`);
+      glowGrad.addColorStop(1, `rgba(${palette.green}, 0)`);
       ctx.fillStyle = glowGrad;
       ctx.fillRect(0, 0, width, height);
 
@@ -384,8 +405,8 @@ export default function HeroVisual() {
         const alpha = 0.15 + Math.max(0, gp.z) * 0.55;
         ctx.fillStyle =
           glyph.text === "AI"
-            ? `rgba(167, 139, 250, ${alpha})`
-            : `rgba(34, 211, 238, ${alpha})`;
+            ? `rgba(${palette.violet}, ${alpha})`
+            : `rgba(${palette.cyan}, ${alpha})`;
         ctx.save();
         ctx.translate(gp.x, gp.y);
         ctx.scale(0.7 + gt * 0.5, 0.7 + gt * 0.5);
@@ -396,8 +417,8 @@ export default function HeroVisual() {
       // Glow platform under the scene
       const floorY = cy + 0.72 * scale;
       const grad = ctx.createRadialGradient(cx, floorY, 0, cx, floorY, scale * 0.55);
-      grad.addColorStop(0, "rgba(34, 211, 238, 0.14)");
-      grad.addColorStop(1, "rgba(34, 211, 238, 0)");
+      grad.addColorStop(0, `rgba(${palette.cyan}, 0.14)`);
+      grad.addColorStop(1, `rgba(${palette.cyan}, 0)`);
       ctx.fillStyle = grad;
       ctx.save();
       ctx.translate(cx, floorY);
@@ -412,6 +433,19 @@ export default function HeroVisual() {
     const reducedMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)"
     ).matches;
+
+    // Keep the canvas palette in sync when the user toggles themes;
+    // under reduced motion the loop isn't running, so redraw once
+    const themeObserver = new MutationObserver(() => {
+      palette = document.documentElement.classList.contains("dark")
+        ? palettes.dark
+        : palettes.light;
+      if (reducedMotion) drawFrame(0);
+    });
+    themeObserver.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
 
     let raf = 0;
     let running = true;
@@ -443,6 +477,7 @@ export default function HeroVisual() {
     return () => {
       running = false;
       cancelAnimationFrame(raf);
+      themeObserver.disconnect();
       window.removeEventListener("resize", resize);
       window.removeEventListener("mousemove", onMouse);
       document.removeEventListener("visibilitychange", onVisibility);

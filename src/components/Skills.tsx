@@ -42,7 +42,7 @@ export default function Skills() {
             viewport={{ once: true, margin: "-60px" }}
             transition={{ duration: 0.6, delay: (i % 3) * 0.12, ease: [0.22, 1, 0.36, 1] }}
             whileHover={{ y: -6 }}
-            className="glass group rounded-2xl p-6 transition-shadow duration-300 hover:shadow-[0_0_35px_rgba(34,211,238,0.12)]"
+            className="glass group rounded-2xl p-6 transition-shadow duration-300 hover:shadow-[0_0_35px_color-mix(in_oklab,var(--accent)_12%,transparent)]"
           >
             <h3 className="mb-4 font-semibold text-accent">{group.category}</h3>
             <div className="flex flex-wrap gap-2">

@@ -71,13 +71,13 @@ export default function Contact() {
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.98 }}
         href={`mailto:${personal.email}`}
-        className="mt-10 inline-block rounded-full bg-gradient-to-r from-accent to-accent-2 px-10 py-4 text-sm font-semibold text-background shadow-[0_0_35px_rgba(34,211,238,0.3)]"
+        className="mt-10 inline-block rounded-full bg-linear-to-r from-accent to-accent-2 px-10 py-4 text-sm font-semibold text-background shadow-[0_0_35px_color-mix(in_oklab,var(--accent)_30%,transparent)]"
       >
         Say Hello
       </motion.a>
 
       <div className="mt-14 grid gap-4 sm:grid-cols-2">
-        {contactLinks.map((link, i) => (
+        {contactLinks .map((link, i) => (
           <motion.a
             key={link.label}
             initial={{ opacity: 0, y: 30 }}

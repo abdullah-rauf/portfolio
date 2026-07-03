@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { motion, useMotionValueEvent, useScroll } from "framer-motion";
+import ThemeToggle from "./ThemeToggle";
 
 const links = [
   { label: "About", href: "#about" },
@@ -49,17 +50,20 @@ export default function Navbar() {
             </motion.li>
           ))}
         </ul>
-        <a
-          href="#contact"
-          className="rounded-full border border-accent/40 px-4 py-1.5 text-sm text-accent transition-all duration-300 hover:bg-accent/10 hover:shadow-[0_0_20px_rgba(34,211,238,0.3)]"
-        >
-          Hire Me
-        </a>
+        <div className="flex items-center gap-3">
+          <ThemeToggle />
+          <a
+            href="#contact"
+            className="rounded-full border border-accent/40 px-4 py-1.5 text-sm text-accent transition-all duration-300 hover:bg-accent/10 hover:shadow-[0_0_20px_color-mix(in_oklab,var(--accent)_30%,transparent)]"
+          >
+            Hire Me
+          </a>
+        </div>
       </nav>
       {/* Scroll progress bar */}
       <motion.div
         style={{ scaleX: scrollYProgress }}
-        className="h-[2px] origin-left bg-gradient-to-r from-accent via-accent-2 to-pink-400"
+        className="h-[2px] origin-left bg-linear-to-r from-accent via-accent-2 to-[var(--grad-3)]"
       />
     </motion.header>
   );

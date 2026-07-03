@@ -83,7 +83,7 @@ export default function Hero() {
             </a>
             <a
               href="#contact"
-              className="rounded-full border border-muted/30 px-8 py-3 text-sm font-semibold transition-all duration-300 hover:border-accent hover:text-accent hover:shadow-[0_0_25px_rgba(34,211,238,0.25)]"
+              className="rounded-full border border-muted/30 px-8 py-3 text-sm font-semibold transition-all duration-300 hover:border-accent hover:text-accent hover:shadow-[0_0_25px_color-mix(in_oklab,var(--accent)_25%,transparent)]"
             >
               Get In Touch
             </a>

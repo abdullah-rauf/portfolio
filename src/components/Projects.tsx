@@ -19,7 +19,7 @@ export default function Projects() {
             viewport={{ once: true, margin: "-60px" }}
             transition={{ duration: 0.6, delay: (i % 3) * 0.12, ease: [0.22, 1, 0.36, 1] }}
             whileHover={{ y: -8 }}
-            className="group relative overflow-hidden rounded-2xl border border-muted/15 bg-surface/60 p-6 backdrop-blur-sm transition-shadow duration-300 hover:shadow-[0_0_40px_rgba(167,139,250,0.15)]"
+            className="group relative overflow-hidden rounded-2xl border border-muted/15 bg-surface/60 p-6 backdrop-blur-sm transition-shadow duration-300 hover:shadow-[0_0_40px_color-mix(in_oklab,var(--accent-2)_15%,transparent)]"
           >
             {/* Hover gradient sweep */}
             <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-accent/8 via-transparent to-accent-2/8 opacity-0 transition-opacity duration-500 group-hover:opacity-100" />

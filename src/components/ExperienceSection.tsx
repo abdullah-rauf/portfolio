@@ -23,7 +23,7 @@ export default function ExperienceSection() {
         <div className="absolute left-[19px] top-0 h-full w-px bg-muted/15 md:left-1/2" />
         <motion.div
           style={{ scaleY: lineScale }}
-          className="absolute left-[19px] top-0 h-full w-px origin-top bg-gradient-to-b from-accent via-accent-2 to-pink-400 md:left-1/2"
+          className="absolute left-[19px] top-0 h-full w-px origin-top bg-linear-to-b from-accent via-accent-2 to-[var(--grad-3)] md:left-1/2"
         />
 
         <div className="flex flex-col gap-14">
@@ -42,7 +42,7 @@ export default function ExperienceSection() {
                   whileInView={{ scale: 1 }}
                   viewport={{ once: true, margin: "-100px" }}
                   transition={{ type: "spring", stiffness: 300, damping: 15, delay: 0.2 }}
-                  className={`absolute top-7 z-10 flex h-10 w-10 items-center justify-center rounded-full border border-accent/40 bg-surface text-accent shadow-[0_0_20px_rgba(34,211,238,0.35)] left-0 ${
+                  className={`absolute top-7 z-10 flex h-10 w-10 items-center justify-center rounded-full border border-accent/40 bg-surface text-accent shadow-[0_0_20px_color-mix(in_oklab,var(--accent)_35%,transparent)] left-0 ${
                     isLeft
                       ? "md:left-auto md:right-0 md:translate-x-1/2"
                       : "md:left-0 md:-translate-x-1/2"

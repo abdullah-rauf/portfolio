@@ -63,7 +63,7 @@ export default function AnimatedBackground() {
           className="h-full w-full"
           style={{
             backgroundImage:
-              "linear-gradient(rgba(139,144,173,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(139,144,173,0.08) 1px, transparent 1px)",
+              "linear-gradient(var(--grid-line) 1px, transparent 1px), linear-gradient(90deg, var(--grid-line) 1px, transparent 1px)",
             backgroundSize: "72px 72px",
             maskImage:
               "radial-gradient(ellipse 90% 70% at 50% 40%, black 30%, transparent 100%)",
@@ -97,9 +97,9 @@ export default function AnimatedBackground() {
             y2="100"
             gradientUnits="userSpaceOnUse"
           >
-            <stop offset="0" stopColor="#22d3ee" stopOpacity="0.03" />
-            <stop offset="0.5" stopColor="#22d3ee" stopOpacity="0.25" />
-            <stop offset="1" stopColor="#67e8f9" stopOpacity="0.5" />
+            <stop offset="0" stopColor="var(--accent)" stopOpacity="0.03" />
+            <stop offset="0.5" stopColor="var(--accent)" stopOpacity="0.25" />
+            <stop offset="1" stopColor="var(--accent)" stopOpacity="0.5" />
           </linearGradient>
           <linearGradient
             id="diag-up"
@@ -109,22 +109,22 @@ export default function AnimatedBackground() {
             y2="0"
             gradientUnits="userSpaceOnUse"
           >
-            <stop offset="0" stopColor="#a78bfa" stopOpacity="0.03" />
-            <stop offset="0.5" stopColor="#a78bfa" stopOpacity="0.22" />
-            <stop offset="1" stopColor="#c4b5fd" stopOpacity="0.45" />
+            <stop offset="0" stopColor="var(--accent-2)" stopOpacity="0.03" />
+            <stop offset="0.5" stopColor="var(--accent-2)" stopOpacity="0.22" />
+            <stop offset="1" stopColor="var(--accent-2)" stopOpacity="0.45" />
           </linearGradient>
         </defs>
 
         {/* Faint full-length tracks so the path is barely visible ahead of the draw */}
         <path
           d="M -4 -4 L 104 104"
-          stroke="rgba(139,144,173,0.08)"
+          stroke="var(--grid-line)"
           strokeWidth="1"
           vectorEffect="non-scaling-stroke"
         />
         <path
           d="M 104 96 L -4 4"
-          stroke="rgba(139,144,173,0.08)"
+          stroke="var(--grid-line)"
           strokeWidth="1"
           vectorEffect="non-scaling-stroke"
         />
@@ -154,7 +154,7 @@ export default function AnimatedBackground() {
         style={{ x: headDownX, y: headDownY }}
         className="absolute left-0 top-0"
       >
-        <div className="h-1.5 w-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-cyan-300/80 shadow-[0_0_14px_3px_rgba(34,211,238,0.3)]" />
+        <div className="h-1.5 w-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent/80 shadow-[0_0_14px_3px_color-mix(in_oklab,var(--accent)_30%,transparent)]" />
         <div className="absolute left-0 top-0 h-20 w-20 -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent/8 blur-2xl" />
       </motion.div>
 
@@ -163,7 +163,7 @@ export default function AnimatedBackground() {
         style={{ x: headUpX, y: headUpY }}
         className="absolute left-0 top-0"
       >
-        <div className="h-1.5 w-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-violet-300/80 shadow-[0_0_14px_3px_rgba(167,139,250,0.3)]" />
+        <div className="h-1.5 w-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent-2/80 shadow-[0_0_14px_3px_color-mix(in_oklab,var(--accent-2)_30%,transparent)]" />
         <div className="absolute left-0 top-0 h-20 w-20 -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent-2/8 blur-2xl" />
       </motion.div>
 
@@ -173,8 +173,8 @@ export default function AnimatedBackground() {
         className="absolute left-0 top-0 h-[500px] w-[500px] rounded-full bg-accent/5 blur-[110px]"
       />
 
-      {/* Vignette to keep edges dark */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_55%,#05060f_100%)]" />
+      {/* Vignette to soften the edges (follows the theme background) */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_55%,var(--background)_100%)]" />
     </div>
   );
 }
