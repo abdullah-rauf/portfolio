@@ -2,31 +2,15 @@
 
 import { motion } from "framer-motion";
 import { Mail, Phone } from "lucide-react";
-import { personal } from "@/data/portfolio";
-import { GithubIcon, LinkedinIcon } from "./BrandIcons";
+import { contactLinks, personal } from "@/constants";
+import { GithubIcon, LinkedinIcon } from "@/components/ui";
 
-const contactLinks = [
-  {
-    icon: Mail,
-    label: personal.email,
-    href: `mailto:${personal.email}`,
-  },
-  {
-    icon: Phone,
-    label: personal.phone,
-    href: `tel:${personal.phone.replace(/-/g, "")}`,
-  },
-  {
-    icon: LinkedinIcon,
-    label: "linkedin.com/in/abdullahrauf",
-    href: personal.linkedin,
-  },
-  {
-    icon: GithubIcon,
-    label: "github.com/abdullah-rauf",
-    href: personal.github,
-  },
-];
+const contactIcons = {
+  mail: Mail,
+  phone: Phone,
+  linkedin: LinkedinIcon,
+  github: GithubIcon,
+} as const;
 
 export default function Contact() {
   return (
@@ -77,23 +61,26 @@ export default function Contact() {
       </motion.a>
 
       <div className="mt-14 grid gap-4 sm:grid-cols-2">
-        {contactLinks .map((link, i) => (
-          <motion.a
-            key={link.label}
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-60px" }}
-            transition={{ duration: 0.5, delay: i * 0.1 }}
-            whileHover={{ y: -4 }}
-            href={link.href}
-            target={link.href.startsWith("http") ? "_blank" : undefined}
-            rel={link.href.startsWith("http") ? "noopener noreferrer" : undefined}
-            className="glass flex items-center gap-3 rounded-xl px-5 py-4 text-sm text-muted transition-colors duration-300 hover:text-accent"
-          >
-            <link.icon size={18} className="shrink-0 text-accent" />
-            <span className="truncate">{link.label}</span>
-          </motion.a>
-        ))}
+        {contactLinks.map((link, i) => {
+          const Icon = contactIcons[link.icon];
+          return (
+            <motion.a
+              key={link.label}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-60px" }}
+              transition={{ duration: 0.5, delay: i * 0.1 }}
+              whileHover={{ y: -4 }}
+              href={link.href}
+              target={link.href.startsWith("http") ? "_blank" : undefined}
+              rel={link.href.startsWith("http") ? "noopener noreferrer" : undefined}
+              className="glass flex items-center gap-3 rounded-xl px-5 py-4 text-sm text-muted transition-colors duration-300 hover:text-accent"
+            >
+              <Icon size={18} className="shrink-0 text-accent" />
+              <span className="truncate">{link.label}</span>
+            </motion.a>
+          );
+        })}
       </div>
     </section>
   );

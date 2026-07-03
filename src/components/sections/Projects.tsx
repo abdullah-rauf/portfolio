@@ -2,8 +2,8 @@
 
 import { motion } from "framer-motion";
 import { Sparkles } from "lucide-react";
-import { projects } from "@/data/portfolio";
-import SectionHeading from "./SectionHeading";
+import { projects } from "@/constants";
+import { SectionHeading } from "@/components/ui";
 
 export default function Projects() {
   return (

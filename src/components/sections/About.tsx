@@ -2,26 +2,14 @@
 
 import { motion } from "framer-motion";
 import { CodeXml, Cpu, Globe, MapPin } from "lucide-react";
-import { personal } from "@/data/portfolio";
-import SectionHeading from "./SectionHeading";
+import { aboutHighlights, personal } from "@/constants";
+import { SectionHeading } from "@/components/ui";
 
-const highlights = [
-  {
-    icon: CodeXml,
-    title: "3+ Years Experience",
-    text: "Building scalable, production-grade web applications end to end.",
-  },
-  {
-    icon: Globe,
-    title: "MERN & Modern JS",
-    text: "React, Next.js, TypeScript, Node.js, Express.js, and Nest.js.",
-  },
-  {
-    icon: Cpu,
-    title: "AI Integrations",
-    text: "OpenAI & Gemini APIs, chatbots, and AI-powered SaaS features.",
-  },
-];
+const highlightIcons = {
+  code: CodeXml,
+  globe: Globe,
+  cpu: Cpu,
+} as const;
 
 export default function About() {
   return (
@@ -43,7 +31,9 @@ export default function About() {
         </motion.div>
 
         <div className="flex flex-col gap-4">
-          {highlights.map((item, i) => (
+          {aboutHighlights.map((item, i) => {
+            const Icon = highlightIcons[item.icon];
+            return (
             <motion.div
               key={item.title}
               initial={{ opacity: 0, x: 50 }}
@@ -54,14 +44,15 @@ export default function About() {
               className="glass flex items-start gap-4 rounded-2xl p-5"
             >
               <span className="rounded-xl bg-accent/10 p-3 text-accent">
-                <item.icon size={22} />
+                <Icon size={22} />
               </span>
               <div>
                 <h3 className="font-semibold">{item.title}</h3>
                 <p className="mt-1 text-sm text-muted">{item.text}</p>
               </div>
             </motion.div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>

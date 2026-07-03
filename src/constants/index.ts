@@ -1,0 +1,10 @@
+export { personal } from "./personal";
+export { education } from "./education";
+export { skillGroups } from "./skill-groups";
+export { experiences } from "./experiences";
+export { projects } from "./projects";
+export { navLinks } from "./navigation";
+export { heroBadges } from "./hero-badges";
+export { heroGlyphs } from "./hero-glyphs";
+export { aboutHighlights } from "./about-highlights";
+export { contactLinks } from "./contact-links";

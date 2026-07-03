@@ -3,8 +3,8 @@
 import { useRef } from "react";
 import { motion, useScroll, useSpring } from "framer-motion";
 import { Briefcase } from "lucide-react";
-import { experiences } from "@/data/portfolio";
-import SectionHeading from "./SectionHeading";
+import { experiences } from "@/constants";
+import { SectionHeading } from "@/components/ui";
 
 export default function ExperienceSection() {
   const timelineRef = useRef<HTMLDivElement>(null);

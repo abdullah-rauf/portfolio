@@ -2,15 +2,8 @@
 
 import { useState } from "react";
 import { motion, useMotionValueEvent, useScroll } from "framer-motion";
-import ThemeToggle from "./ThemeToggle";
-
-const links = [
-  { label: "About", href: "#about" },
-  { label: "Skills", href: "#skills" },
-  { label: "Experience", href: "#experience" },
-  { label: "Projects", href: "#projects" },
-  { label: "Contact", href: "#contact" },
-];
+import { navLinks } from "@/constants";
+import { ThemeToggle } from "@/components/ui";
 
 export default function Navbar() {
   const { scrollYProgress, scrollY } = useScroll();
@@ -34,7 +27,7 @@ export default function Navbar() {
           Abdullah<span className="text-gradient">.dev</span>
         </a>
         <ul className="hidden items-center gap-8 text-sm text-muted md:flex">
-          {links.map((link, i) => (
+          {navLinks.map((link, i) => (
             <motion.li
               key={link.href}
               initial={{ y: -20, opacity: 0 }}

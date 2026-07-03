@@ -1,8 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { skillGroups } from "@/data/portfolio";
-import SectionHeading from "./SectionHeading";
+import { skillGroups } from "@/constants";
+import { SectionHeading } from "@/components/ui";
 
 const allSkills = skillGroups.flatMap((group) => group.skills);
 

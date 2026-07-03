@@ -2,8 +2,8 @@
 
 import { motion } from "framer-motion";
 import { GraduationCap } from "lucide-react";
-import { education } from "@/data/portfolio";
-import SectionHeading from "./SectionHeading";
+import { education } from "@/constants";
+import { SectionHeading } from "@/components/ui";
 
 export default function Education() {
   return (

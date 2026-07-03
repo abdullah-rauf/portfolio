@@ -34,7 +34,7 @@ export default function SectionHeading({
         whileInView={{ scaleX: 1 }}
         viewport={{ once: true, margin: "-80px" }}
         transition={{ duration: 0.8, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
-        className="mt-4 h-px w-24 origin-left bg-gradient-to-r from-accent to-accent-2"
+        className="mt-4 h-px w-24 origin-left bg-linear-to-r from-accent to-accent-2"
       />
     </div>
   );

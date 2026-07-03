@@ -2,18 +2,11 @@
 
 import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowDown, Mail } from "lucide-react";
-import { personal } from "@/data/portfolio";
-import { GithubIcon, LinkedinIcon } from "./BrandIcons";
+import { heroBadges, personal } from "@/constants";
+import { GithubIcon, LinkedinIcon } from "@/components/ui";
 import HeroVisual from "./HeroVisual";
 
 const nameLetters = personal.name.split("");
-
-const orbitBadges = [
-  { label: "Nest.js", x: "-6%", y: "12%", delay: 0 },
-  { label: "Next.js", x: "78%", y: "4%", delay: 0.6 },
-  { label: "TypeScript", x: "-10%", y: "68%", delay: 1.2 },
-  { label: "Node.js", x: "80%", y: "78%", delay: 1.8 },
-];
 
 export default function Hero() {
   const { scrollYProgress } = useScroll();
@@ -126,7 +119,7 @@ export default function Hero() {
         {/* Right: 3D particle figure with floating badges */}
         <div className="relative mx-auto w-full max-w-xs sm:max-w-sm lg:max-w-md">
           <HeroVisual />
-          {orbitBadges.map((badge) => (
+          {heroBadges.map((badge) => (
             <motion.span
               key={badge.label}
               initial={{ opacity: 0, scale: 0.6 }}

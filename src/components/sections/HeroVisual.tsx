@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
+import { heroGlyphs } from "@/constants";
 
 type Point3D = { x: number; y: number; z: number };
 
@@ -211,16 +212,6 @@ const palettes = {
   },
 };
 
-// Tech glyphs orbiting the figure: radius, height, speed, phase
-const glyphs = [
-  { text: "</>", radius: 0.72, y: 0.45, speed: 0.00045, phase: 0 },
-  { text: "{ }", radius: 0.8, y: 0.1, speed: -0.00035, phase: 2.1 },
-  { text: "=>", radius: 0.68, y: -0.25, speed: 0.0005, phase: 4.2 },
-  { text: "git", radius: 0.85, y: 0.28, speed: -0.0004, phase: 1.2 },
-  { text: "npm", radius: 0.75, y: -0.45, speed: 0.0004, phase: 3.3 },
-  { text: "AI", radius: 0.9, y: -0.05, speed: 0.00055, phase: 5.2 },
-];
-
 export default function HeroVisual() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -394,7 +385,7 @@ export default function HeroVisual() {
       ctx.font = "600 13px var(--font-geist-mono), monospace";
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
-      for (const glyph of glyphs) {
+      for (const glyph of heroGlyphs) {
         const angle = glyph.phase + time * glyph.speed;
         const gp = project({
           x: Math.cos(angle) * glyph.radius,

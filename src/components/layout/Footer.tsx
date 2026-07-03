@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { personal } from "@/data/portfolio";
+import { personal } from "@/constants";
 
 export default function Footer() {
   return (
