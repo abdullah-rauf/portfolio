@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { Mail, Phone } from "lucide-react";
 import { contactLinks, personal } from "@/constants";
-import { GithubIcon, LinkedinIcon } from "@/components/ui";
+import { GithubIcon, LinkedinIcon } from "@/icons";
 
 const contactIcons = {
   mail: Mail,

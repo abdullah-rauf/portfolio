@@ -13,8 +13,7 @@ export default function Footer() {
       className="border-t border-muted/10 py-8 text-center text-sm text-muted"
     >
       <p>
-        © {new Date().getFullYear()} {personal.name}. Built with Next.js,
-        Tailwind CSS &amp; Framer Motion.
+        © {new Date().getFullYear()} {personal.name}. All rights reserved.
       </p>
     </motion.footer>
   );

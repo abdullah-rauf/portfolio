@@ -3,7 +3,7 @@
 import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowDown, Mail } from "lucide-react";
 import { heroBadges, personal } from "@/constants";
-import { GithubIcon, LinkedinIcon } from "@/components/ui";
+import { GithubIcon, LinkedinIcon } from "@/icons";
 import HeroVisual from "./HeroVisual";
 
 const nameLetters = personal.name.split("");
