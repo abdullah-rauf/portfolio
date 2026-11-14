@@ -29,9 +29,13 @@ export default function ExperienceSection() {
         <div className="flex flex-col gap-14">
           {experiences.map((exp, i) => {
             const isLeft = i % 2 === 0;
+            const expKey = `experience-${i}-${exp.company ?? ""}`;
+            const stages = exp.stages ?? [];
+            const hasStages = stages.length > 0;
+
             return (
               <div
-                key={exp.company}
+                key={expKey}
                 className={`relative flex md:w-1/2 ${
                   isLeft ? "md:pr-14" : "md:ml-auto md:pl-14"
                 } pl-14 md:pl-0 ${!isLeft ? "md:pl-14" : ""}`}
@@ -64,14 +68,52 @@ export default function ExperienceSection() {
                   </span>
                   <h3 className="mt-2 text-xl font-semibold">{exp.role}</h3>
                   <p className="mt-0.5 text-sm text-accent-2">{exp.company}</p>
-                  <ul className="mt-4 flex flex-col gap-2 text-sm text-muted">
-                    {exp.points.map((point) => (
-                      <li key={point} className="flex gap-2">
-                        <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-accent" />
-                        {point}
-                      </li>
-                    ))}
-                  </ul>
+
+                  {hasStages ? (
+                    <div className="mt-5 flex flex-col gap-5">
+                      {stages.map((stage, stageIndex) => (
+                        <div
+                          key={`${stage.role ?? ""}-${stage.period ?? ""}`}
+                          className={
+                            stageIndex > 0
+                              ? "border-t border-muted/15 pt-5"
+                              : undefined
+                          }
+                        >
+                          <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                            <h4 className="text-sm font-semibold text-foreground">
+                              {stage.role}
+                            </h4>
+                            <span className="font-mono text-[11px] uppercase tracking-wider text-muted">
+                              {stage.period}
+                            </span>
+                          </div>
+                          {stageIndex > 0 ? (
+                            <p className="mt-1 text-xs text-accent">
+                              Promoted from {stages[stageIndex - 1]?.role}
+                            </p>
+                          ) : null}
+                          <ul className="mt-3 flex flex-col gap-2 text-sm text-muted">
+                            {stage.points?.map((point) => (
+                              <li key={point} className="flex gap-2">
+                                <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-accent" />
+                                {point}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <ul className="mt-4 flex flex-col gap-2 text-sm text-muted">
+                      {exp.points?.map((point) => (
+                        <li key={point} className="flex gap-2">
+                          <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-accent" />
+                          {point}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                 </motion.div>
               </div>
             );

@@ -8,12 +8,12 @@ export const aboutHighlights: AboutHighlight[] = [
   },
   {
     icon: "globe",
-    title: "MERN & Modern JS",
-    text: "React, Next.js, TypeScript, Node.js, Express.js, and Nest.js.",
+    title: "Full-Stack Delivery",
+    text: "React, Next.js, TypeScript, Node.js, NestJS, Python, Django, and FastAPI.",
   },
   {
     icon: "cpu",
     title: "AI Integrations",
-    text: "OpenAI & Gemini APIs, chatbots, and AI-powered SaaS features.",
+    text: "OpenAI & Gemini APIs, LangChain, RAG, and AI-powered SaaS features.",
   },
 ];

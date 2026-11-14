@@ -16,7 +16,17 @@ export const skillGroups: SkillGroup[] = [
   },
   {
     category: "Back-End",
-    skills: ["Node.js", "Express.js", "Nest.js", "REST APIs", "GraphQL APIs"],
+    skills: [
+      "Node.js",
+      "Express.js",
+      "Nest.js",
+      "Python",
+      "Django",
+      "FastAPI",
+      "REST APIs",
+      "GraphQL APIs",
+      "Authentication",
+    ],
   },
   {
     category: "Databases",
@@ -27,6 +37,10 @@ export const skillGroups: SkillGroup[] = [
     skills: [
       "OpenAI API",
       "Gemini API",
+      "LangChain",
+      "RAG",
+      "Embeddings",
+      "Vector Databases",
       "Prompt Engineering",
       "Chatbots",
       "API Integrations",
@@ -35,11 +49,12 @@ export const skillGroups: SkillGroup[] = [
   {
     category: "Cloud & DevOps",
     skills: [
-      "AWS (S3, EC2, Lambda)",
+      "AWS (EC2, Lightsail)",
       "Google Cloud",
       "Heroku",
       "CI/CD",
       "Vercel",
+      "Testing",
     ],
   },
   {

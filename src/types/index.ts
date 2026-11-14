@@ -3,11 +3,18 @@ export type SkillGroup = {
   skills: string[];
 };
 
+export type ExperienceStage = {
+  role: string;
+  period: string;
+  points: string[];
+};
+
 export type Experience = {
   role: string;
   company: string;
   period: string;
   points: string[];
+  stages?: ExperienceStage[];
 };
 
 export type Project = {
