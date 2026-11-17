@@ -1,63 +1,122 @@
 "use client";
 
-import { useState } from "react";
-import { motion, useMotionValueEvent, useScroll } from "framer-motion";
-import { navLinks } from "@/constants";
-import { ThemeToggle } from "@/components/ui";
+import { useEffect, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { navLinks, personal } from "@/constants";
+import { Magnetic } from "@/components/motion";
 
 export default function Navbar() {
-  const { scrollYProgress, scrollY } = useScroll();
+  const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
-  useMotionValueEvent(scrollY, "change", (latest) => {
-    setScrolled(latest > 40);
-  });
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 24);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => {
+    document.body.style.overflow = open ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [open]);
 
   return (
-    <motion.header
-      initial={{ y: -80, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-      className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
-        scrolled ? "glass shadow-lg shadow-black/20" : "bg-transparent"
-      }`}
-    >
-      <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-        <a href="#" className="text-lg font-bold tracking-tight">
-          Abdullah<span className="text-gradient">.dev</span>
-        </a>
-        <ul className="hidden items-center gap-8 text-sm text-muted md:flex">
-          {navLinks.map((link, i) => (
-            <motion.li
-              key={link.href}
-              initial={{ y: -20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.15 + i * 0.08, duration: 0.5 }}
+    <>
+      <header
+        className={`fixed inset-x-0 top-0 z-[60] layout-pad transition-all duration-300 ${
+          scrolled ? "py-3" : "py-5"
+        }`}
+      >
+        <div className="mx-auto flex max-w-[1400px] items-center justify-between">
+          <Magnetic strength={0.25}>
+            <a
+              href="#"
+              className="font-display text-sm tracking-[0.12em] text-foreground sm:text-base"
+              style={{ fontWeight: 800 }}
             >
+              ABDULLAH
+            </a>
+          </Magnetic>
+
+          <div className="flex items-center gap-2 sm:gap-3">
+            <Magnetic strength={0.4}>
               <a
-                href={link.href}
-                className="relative transition-colors hover:text-foreground after:absolute after:-bottom-1 after:left-0 after:h-px after:w-0 after:bg-accent after:transition-all after:duration-300 hover:after:w-full"
+                href={`mailto:${personal.email}`}
+                className="pill border border-foreground/20 bg-white px-4 py-2.5 text-foreground hover:bg-foreground hover:text-background"
               >
-                {link.label}
+                Get in touch
               </a>
-            </motion.li>
-          ))}
-        </ul>
-        <div className="flex items-center gap-3">
-          <ThemeToggle />
-          <a
-            href="#contact"
-            className="rounded-full border border-accent/40 px-4 py-1.5 text-sm text-accent transition-all duration-300 hover:bg-accent/10 hover:shadow-[0_0_20px_color-mix(in_oklab,var(--accent)_30%,transparent)]"
-          >
-            Hire Me
-          </a>
+            </Magnetic>
+            <Magnetic strength={0.4}>
+              <button
+                type="button"
+                aria-expanded={open}
+                aria-controls="site-menu"
+                onClick={() => setOpen((v) => !v)}
+                className="pill bg-foreground px-4 py-2.5 text-background hover:bg-foreground/85"
+              >
+                {open ? "Close" : "Menu"}
+              </button>
+            </Magnetic>
+          </div>
         </div>
-      </nav>
-      {/* Scroll progress bar */}
-      <motion.div
-        style={{ scaleX: scrollYProgress }}
-        className="h-[2px] origin-left bg-linear-to-r from-accent via-accent-2 to-[var(--grad-3)]"
-      />
-    </motion.header>
+      </header>
+
+      <AnimatePresence>
+        {open ? (
+          <motion.div
+            id="site-menu"
+            className="fixed inset-0 z-[55] bg-foreground text-background"
+            initial={{ clipPath: "circle(0% at calc(100% - 4rem) 2.5rem)" }}
+            animate={{ clipPath: "circle(150% at calc(100% - 4rem) 2.5rem)" }}
+            exit={{ clipPath: "circle(0% at calc(100% - 4rem) 2.5rem)" }}
+            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <div className="layout-pad flex h-full flex-col justify-between py-28">
+              <nav className="mx-auto w-full max-w-[1400px]">
+                <p className="mb-8 text-xs uppercase tracking-[0.2em] text-background/50">
+                  Menu
+                </p>
+                <ul className="space-y-2">
+                  {navLinks?.map?.((link, i) => (
+                    <li key={link.href} className="overflow-hidden">
+                      <motion.a
+                        href={link.href}
+                        onClick={() => setOpen(false)}
+                        initial={{ y: "110%" }}
+                        animate={{ y: "0%" }}
+                        transition={{
+                          delay: 0.18 + i * 0.07,
+                          duration: 0.7,
+                          ease: [0.22, 1, 0.36, 1],
+                        }}
+                        className="font-display block text-4xl tracking-tight transition-opacity hover:opacity-70 sm:text-6xl md:text-7xl"
+                        style={{ fontWeight: 700 }}
+                      >
+                        {link.label}
+                      </motion.a>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+              <div className="mx-auto flex w-full max-w-[1400px] flex-wrap gap-6 text-sm text-background/60">
+                <a href={personal.github} target="_blank" rel="noreferrer" className="hover:text-background">
+                  GitHub
+                </a>
+                <a href={personal.linkedin} target="_blank" rel="noreferrer" className="hover:text-background">
+                  LinkedIn
+                </a>
+                <a href={`mailto:${personal.email}`} className="hover:text-background">
+                  {personal.email}
+                </a>
+              </div>
+            </div>
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
+    </>
   );
 }

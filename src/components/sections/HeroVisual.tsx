@@ -1,490 +1,144 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { motion } from "framer-motion";
-import { heroGlyphs } from "@/constants";
+import { motion, useMotionTemplate, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { useRef } from "react";
 
-type Point3D = { x: number; y: number; z: number };
+const tiles = [
+  { x: "0%", y: "8%", w: "28%", h: "42%", delay: 0.1, accent: true, depth: 0.1 },
+  { x: "32%", y: "0%", w: "22%", h: "28%", delay: 0.18, depth: 0.14 },
+  { x: "58%", y: "12%", w: "42%", h: "36%", delay: 0.24, accent: true, depth: 0.18 },
+  { x: "8%", y: "56%", w: "36%", h: "38%", delay: 0.3, depth: 0.12 },
+  { x: "48%", y: "52%", w: "24%", h: "40%", delay: 0.36, accent: true, depth: 0.2 },
+  { x: "76%", y: "56%", w: "24%", h: "32%", delay: 0.42, depth: 0.16 },
+];
 
-/**
- * A hologram software engineer: a particle figure seated at a glowing
- * laptop, code lines "typing" across its screen, with tech glyphs
- * orbiting the scene. Rendered on a plain 2D canvas — the Three.js look
- * without shipping Three.js.
- *
- * Low-end friendly: adaptive detail, capped pixel ratio, particle
- * connections precomputed once (the figure is rigid), pauses when the
- * tab is hidden, static frame under prefers-reduced-motion.
- */
+const ease = [0.22, 1, 0.36, 1] as const;
 
-// Rings of points along a limb segment from a to b
-function addSegment(
-  out: Point3D[],
-  a: Point3D,
-  b: Point3D,
-  rStart: number,
-  rEnd: number,
-  rings: number,
-  perRing: number
-) {
-  for (let i = 0; i < rings; i++) {
-    const t = rings === 1 ? 0 : i / (rings - 1);
-    const cx = a.x + (b.x - a.x) * t;
-    const cy = a.y + (b.y - a.y) * t;
-    const cz = a.z + (b.z - a.z) * t;
-    const r = rStart + (rEnd - rStart) * t;
-    for (let k = 0; k < perRing; k++) {
-      const angle = (Math.PI * 2 * k) / perRing + t * 0.7;
-      out.push({
-        x: cx + r * Math.cos(angle),
-        y: cy,
-        z: cz + r * Math.sin(angle),
-      });
-    }
-  }
-}
-
-// Sphere of points (for the head), Fibonacci lattice
-function addSphere(out: Point3D[], center: Point3D, radius: number, count: number) {
-  const golden = Math.PI * (3 - Math.sqrt(5));
-  for (let i = 0; i < count; i++) {
-    const y = 1 - (i / (count - 1)) * 2;
-    const ringRadius = Math.sqrt(1 - y * y);
-    const theta = golden * i;
-    out.push({
-      x: center.x + Math.cos(theta) * ringRadius * radius,
-      y: center.y + y * radius,
-      z: center.z + Math.sin(theta) * ringRadius * radius,
-    });
-  }
-}
-
-type Figure = {
-  points: Point3D[];
-  screenStart: number;
-  screenRows: number;
-  screenCols: number;
+type HeroVisualProps = {
+  ready?: boolean;
 };
 
-/** Seated developer facing the viewer, laptop in front. */
-function buildFigure(lowDetail: boolean): Figure {
-  const points: Point3D[] = [];
-  const d = lowDetail ? 0.7 : 1;
-  const rings = (n: number) => Math.max(3, Math.round(n * d));
-  const per = (n: number) => Math.max(4, Math.round(n * d));
-
-  // Head, tilted slightly down toward the screen
-  addSphere(points, { x: 0, y: 0.5, z: 0.06 }, 0.14, lowDetail ? 18 : 28);
-  // Torso leaning a little toward the laptop
-  addSegment(
-    points,
-    { x: 0, y: 0.33, z: 0.07 },
-    { x: 0, y: -0.08, z: 0 },
-    0.15,
-    0.12,
-    rings(6),
-    per(8)
-  );
-  // Upper arms: shoulders down and forward
-  addSegment(
-    points,
-    { x: -0.21, y: 0.28, z: 0.06 },
-    { x: -0.24, y: 0.05, z: 0.22 },
-    0.05,
-    0.04,
-    rings(4),
-    per(5)
-  );
-  addSegment(
-    points,
-    { x: 0.21, y: 0.28, z: 0.06 },
-    { x: 0.24, y: 0.05, z: 0.22 },
-    0.05,
-    0.04,
-    rings(4),
-    per(5)
-  );
-  // Forearms reaching to the keyboard
-  addSegment(
-    points,
-    { x: -0.24, y: 0.05, z: 0.22 },
-    { x: -0.1, y: -0.02, z: 0.4 },
-    0.04,
-    0.03,
-    rings(4),
-    per(4)
-  );
-  addSegment(
-    points,
-    { x: 0.24, y: 0.05, z: 0.22 },
-    { x: 0.1, y: -0.02, z: 0.4 },
-    0.04,
-    0.03,
-    rings(4),
-    per(4)
-  );
-  // Thighs forward (seated)
-  addSegment(
-    points,
-    { x: -0.09, y: -0.08, z: 0.02 },
-    { x: -0.13, y: -0.14, z: 0.34 },
-    0.07,
-    0.055,
-    rings(4),
-    per(6)
-  );
-  addSegment(
-    points,
-    { x: 0.09, y: -0.08, z: 0.02 },
-    { x: 0.13, y: -0.14, z: 0.34 },
-    0.07,
-    0.055,
-    rings(4),
-    per(6)
-  );
-  // Shins down to the floor
-  addSegment(
-    points,
-    { x: -0.13, y: -0.14, z: 0.34 },
-    { x: -0.15, y: -0.62, z: 0.3 },
-    0.05,
-    0.04,
-    rings(5),
-    per(5)
-  );
-  addSegment(
-    points,
-    { x: 0.13, y: -0.14, z: 0.34 },
-    { x: 0.15, y: -0.62, z: 0.3 },
-    0.05,
-    0.04,
-    rings(5),
-    per(5)
-  );
-
-  // Laptop keyboard: flat grid floating in front of the hands
-  const kbRows = 3;
-  const kbCols = lowDetail ? 5 : 7;
-  for (let r = 0; r < kbRows; r++) {
-    for (let c = 0; c < kbCols; c++) {
-      points.push({
-        x: -0.2 + (0.4 * c) / (kbCols - 1),
-        y: -0.05,
-        z: 0.38 + (0.14 * r) / (kbRows - 1),
-      });
-    }
-  }
-
-  // Laptop screen: grid rising from the keyboard's far edge, tilted back
-  const screenRows = lowDetail ? 5 : 6;
-  const screenCols = lowDetail ? 6 : 8;
-  const screenStart = points.length;
-  for (let r = 0; r < screenRows; r++) {
-    const t = r / (screenRows - 1);
-    const y = -0.03 + 0.36 * t;
-    const z = 0.53 + 0.08 * t;
-    for (let c = 0; c < screenCols; c++) {
-      points.push({
-        x: -0.21 + (0.42 * c) / (screenCols - 1),
-        y,
-        z,
-      });
-    }
-  }
-
-  return { points, screenStart, screenRows, screenCols };
-}
-
-// Canvas color palettes (RGB channels) per theme; light needs deeper
-// shades to stay visible on a bright background
-const palettes = {
-  dark: {
-    line: "103, 232, 249",
-    cyan: "34, 211, 238",
-    violet: "167, 139, 250",
-    green: "74, 222, 128",
-  },
-  light: {
-    line: "14, 116, 144",
-    cyan: "8, 145, 178",
-    violet: "109, 40, 217",
-    green: "22, 163, 74",
-  },
-};
-
-export default function HeroVisual() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    const deviceMemory =
-      (navigator as Navigator & { deviceMemory?: number }).deviceMemory ?? 8;
-    const lowDetail = window.innerWidth < 768 || deviceMemory <= 4;
-
-    let palette = document.documentElement.classList.contains("dark")
-      ? palettes.dark
-      : palettes.light;
-
-    const { points, screenStart, screenRows, screenCols } =
-      buildFigure(lowDetail);
-    const count = points.length;
-
-    // The figure is rigid — rotation and bobbing preserve distances,
-    // so neighbor pairs only need computing once.
-    const pairs: [number, number][] = [];
-    const maxDist = 0.16;
-    for (let i = 0; i < count; i++) {
-      for (let j = i + 1; j < count; j++) {
-        const dx = points[i].x - points[j].x;
-        const dy = points[i].y - points[j].y;
-        const dz = points[i].z - points[j].z;
-        if (dx * dx + dy * dy + dz * dz < maxDist * maxDist) {
-          pairs.push([i, j]);
-        }
-      }
-    }
-
-    const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
-    let width = 0;
-    let height = 0;
-
-    const resize = () => {
-      // offsetWidth/Height ignore the entrance scale transform, so the
-      // canvas buffer matches the final layout size
-      width = canvas.offsetWidth;
-      height = canvas.offsetHeight;
-      canvas.width = width * dpr;
-      canvas.height = height * dpr;
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    };
-    resize();
-    window.addEventListener("resize", resize);
-
-    // Sway gently instead of spinning full circles, so the developer
-    // mostly faces the viewer
-    let rotX = 0.12;
-    let targetTiltX = 0.12;
-    let mouseInfluence = 0;
-    let targetMouse = 0;
-
-    const onMouse = (e: MouseEvent) => {
-      const nx = e.clientX / window.innerWidth - 0.5;
-      const ny = e.clientY / window.innerHeight - 0.5;
-      targetTiltX = 0.12 + ny * 0.1;
-      targetMouse = nx * 0.5;
-    };
-    window.addEventListener("mousemove", onMouse);
-
-    const projected = new Array<{ x: number; y: number; z: number }>(count);
-
-    const drawFrame = (time: number) => {
-      ctx.clearRect(0, 0, width, height);
-
-      const cx = width / 2;
-      const cy = height / 2;
-      const scale = Math.min(width, height) * 0.5;
-      const perspective = 3.2;
-      const bob = Math.sin(time * 0.0012) * 0.015;
-      const rotY = Math.sin(time * 0.0004) * 0.55 + mouseInfluence;
-
-      const sinY = Math.sin(rotY);
-      const cosY = Math.cos(rotY);
-      const sinX = Math.sin(rotX);
-      const cosX = Math.cos(rotX);
-
-      const project = (p: Point3D) => {
-        const x1 = p.x * cosY + p.z * sinY;
-        const z1 = -p.x * sinY + p.z * cosY;
-        const y2 = p.y * cosX - z1 * sinX + bob;
-        const z2 = p.y * sinX + z1 * cosX;
-        const depth = perspective / (perspective - z2);
-        return {
-          x: cx + x1 * scale * depth,
-          y: cy - y2 * scale * depth, // canvas y grows downward
-          z: z2,
-        };
-      };
-
-      for (let i = 0; i < count; i++) {
-        projected[i] = project(points[i]);
-      }
-
-      // Connections — brighter when both ends face the viewer
-      ctx.lineWidth = 0.6;
-      for (const [a, b] of pairs) {
-        const pa = projected[a];
-        const pb = projected[b];
-        const facing = (pa.z + pb.z) / 2;
-        const alpha = 0.05 + Math.max(0, facing) * 0.3;
-        ctx.strokeStyle = `rgba(${palette.line}, ${alpha})`;
-        ctx.beginPath();
-        ctx.moveTo(pa.x, pa.y);
-        ctx.lineTo(pb.x, pb.y);
-        ctx.stroke();
-      }
-
-      // "Typing" progress: screen rows light up top-to-bottom, then reset
-      const cycle = screenRows + 3;
-      const progress = (time * 0.0018) % cycle;
-
-      // Particles
-      for (let i = 0; i < count; i++) {
-        const p = projected[i];
-        const t = (p.z + 1) / 2;
-        const isScreen = i >= screenStart;
-
-        if (isScreen) {
-          const local = i - screenStart;
-          const row = screenRows - 1 - Math.floor(local / screenCols);
-          const col = local % screenCols;
-          const rowLit = row < Math.floor(progress);
-          const isCursorRow = row === Math.floor(progress);
-          const litCols = isCursorRow
-            ? Math.floor((progress % 1) * screenCols)
-            : 0;
-          const lit = rowLit || (isCursorRow && col <= litCols);
-          const alpha = lit ? 0.95 : 0.2 + t * 0.2;
-          const size = lit ? 1.7 : 0.9;
-          ctx.fillStyle = `rgba(${palette.green}, ${alpha})`;
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, size, 0, Math.PI * 2);
-          ctx.fill();
-        } else {
-          const size = 0.8 + t * 1.5;
-          const alpha = 0.25 + t * 0.65;
-          ctx.fillStyle =
-            i % 3 === 0
-              ? `rgba(${palette.violet}, ${alpha})`
-              : `rgba(${palette.cyan}, ${alpha})`;
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, size, 0, Math.PI * 2);
-          ctx.fill();
-        }
-      }
-
-      // Screen glow cast toward the developer's chest
-      const glowSrc = project({ x: 0, y: 0.15, z: 0.55 });
-      const glowGrad = ctx.createRadialGradient(
-        glowSrc.x,
-        glowSrc.y,
-        0,
-        glowSrc.x,
-        glowSrc.y,
-        scale * 0.3
-      );
-      glowGrad.addColorStop(0, `rgba(${palette.green}, 0.08)`);
-      glowGrad.addColorStop(1, `rgba(${palette.green}, 0)`);
-      ctx.fillStyle = glowGrad;
-      ctx.fillRect(0, 0, width, height);
-
-      // Orbiting tech glyphs
-      ctx.font = "600 13px var(--font-geist-mono), monospace";
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      for (const glyph of heroGlyphs) {
-        const angle = glyph.phase + time * glyph.speed;
-        const gp = project({
-          x: Math.cos(angle) * glyph.radius,
-          y: glyph.y,
-          z: Math.sin(angle) * glyph.radius,
-        });
-        const gt = (gp.z + 1) / 2;
-        const alpha = 0.15 + Math.max(0, gp.z) * 0.55;
-        ctx.fillStyle =
-          glyph.text === "AI"
-            ? `rgba(${palette.violet}, ${alpha})`
-            : `rgba(${palette.cyan}, ${alpha})`;
-        ctx.save();
-        ctx.translate(gp.x, gp.y);
-        ctx.scale(0.7 + gt * 0.5, 0.7 + gt * 0.5);
-        ctx.fillText(glyph.text, 0, 0);
-        ctx.restore();
-      }
-
-      // Glow platform under the scene
-      const floorY = cy + 0.72 * scale;
-      const grad = ctx.createRadialGradient(cx, floorY, 0, cx, floorY, scale * 0.55);
-      grad.addColorStop(0, `rgba(${palette.cyan}, 0.14)`);
-      grad.addColorStop(1, `rgba(${palette.cyan}, 0)`);
-      ctx.fillStyle = grad;
-      ctx.save();
-      ctx.translate(cx, floorY);
-      ctx.scale(1, 0.22);
-      ctx.translate(-cx, -floorY);
-      ctx.beginPath();
-      ctx.arc(cx, floorY, scale * 0.55, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.restore();
-    };
-
-    const reducedMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)"
-    ).matches;
-
-    // Keep the canvas palette in sync when the user toggles themes;
-    // under reduced motion the loop isn't running, so redraw once
-    const themeObserver = new MutationObserver(() => {
-      palette = document.documentElement.classList.contains("dark")
-        ? palettes.dark
-        : palettes.light;
-      if (reducedMotion) drawFrame(0);
-    });
-    themeObserver.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ["class"],
-    });
-
-    let raf = 0;
-    let running = true;
-
-    const loop = (time: number) => {
-      if (!running) return;
-      rotX += (targetTiltX - rotX) * 0.05;
-      mouseInfluence += (targetMouse - mouseInfluence) * 0.04;
-      drawFrame(time);
-      raf = requestAnimationFrame(loop);
-    };
-
-    const onVisibility = () => {
-      running = document.visibilityState === "visible" && !reducedMotion;
-      if (running) {
-        raf = requestAnimationFrame(loop);
-      } else {
-        cancelAnimationFrame(raf);
-      }
-    };
-    document.addEventListener("visibilitychange", onVisibility);
-
-    if (reducedMotion) {
-      drawFrame(0); // single static frame
-    } else {
-      raf = requestAnimationFrame(loop);
-    }
-
-    return () => {
-      running = false;
-      cancelAnimationFrame(raf);
-      themeObserver.disconnect();
-      window.removeEventListener("resize", resize);
-      window.removeEventListener("mousemove", onMouse);
-      document.removeEventListener("visibilitychange", onVisibility);
-    };
-  }, []);
+function Tile({
+  tile,
+  index,
+  ready,
+  mx,
+  my,
+}: {
+  tile: (typeof tiles)[number];
+  index: number;
+  ready: boolean;
+  mx: ReturnType<typeof useSpring>;
+  my: ReturnType<typeof useSpring>;
+}) {
+  const x = useTransform(mx, (v) => v * tile.depth);
+  const y = useTransform(my, (v) => v * (tile.depth * 0.8));
 
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.85 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 1.2, delay: 0.6, ease: [0.22, 1, 0.36, 1] }}
-      className="relative mx-auto aspect-square w-full max-w-md"
+      className={`absolute overflow-hidden rounded-md will-change-transform ${
+        tile.accent ? "bg-foreground" : "bg-foreground/80"
+      }`}
+      style={{
+        left: tile.x,
+        top: tile.y,
+        width: tile.w,
+        height: tile.h,
+        x,
+        y,
+      }}
+      initial={{ opacity: 0, scale: 0.7, y: 60, clipPath: "inset(100% 0 0 0)" }}
+      animate={
+        ready
+          ? { opacity: 1, scale: 1, y: 0, clipPath: "inset(0% 0 0 0)" }
+          : { opacity: 0, scale: 0.7, y: 60, clipPath: "inset(100% 0 0 0)" }
+      }
+      transition={{
+        delay: ready ? 0.55 + tile.delay : 0,
+        duration: 1.05,
+        ease,
+      }}
     >
-      {/* Soft halo behind the scene */}
-      <div className="absolute inset-8 rounded-full bg-accent/8 blur-3xl" />
-      <canvas ref={canvasRef} className="relative h-full w-full" />
+      <motion.div
+        className="absolute inset-0"
+        style={{
+          background:
+            index % 2 === 0
+              ? "radial-gradient(circle at 30% 30%, rgba(255,255,255,0.2), transparent 55%)"
+              : "radial-gradient(circle at 70% 60%, rgba(255,255,255,0.14), transparent 50%)",
+        }}
+        animate={{
+          x: [0, 14, -10, 0],
+          y: [0, -12, 8, 0],
+          scale: [1, 1.1, 0.95, 1],
+        }}
+        transition={{
+          duration: 7 + index,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
+      />
+      <motion.span
+        className="absolute inset-[18%] rounded-full border border-white/15"
+        animate={{ rotate: [0, 180, 360], scale: [0.9, 1.08, 0.9] }}
+        transition={{ duration: 10 + index * 1.2, repeat: Infinity, ease: "linear" }}
+      />
+      {tile.accent ? (
+        <motion.span
+          className="absolute left-1/2 top-1/2 h-10 w-10 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/90 sm:h-14 sm:w-14"
+          animate={{ scale: [0.85, 1.12, 0.85], opacity: [0.65, 1, 0.65] }}
+          transition={{ duration: 3.2 + index * 0.2, repeat: Infinity, ease: "easeInOut" }}
+        />
+      ) : null}
+    </motion.div>
+  );
+}
+
+export default function HeroVisual({ ready = true }: HeroVisualProps) {
+  const ref = useRef<HTMLDivElement>(null);
+  const mx = useMotionValue(0);
+  const my = useMotionValue(0);
+  const sx = useSpring(mx, { stiffness: 80, damping: 20 });
+  const sy = useSpring(my, { stiffness: 80, damping: 20 });
+  const rotateX = useTransform(sy, [-40, 40], [6, -6]);
+  const rotateY = useTransform(sx, [-40, 40], [-6, 6]);
+  const transform = useMotionTemplate`perspective(900px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+
+  const onMove = (e: React.MouseEvent) => {
+    const el = ref.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    mx.set(((e.clientX - rect.left) / rect.width - 0.5) * 80);
+    my.set(((e.clientY - rect.top) / rect.height - 0.5) * 80);
+  };
+
+  return (
+    <motion.div
+      ref={ref}
+      onMouseMove={onMove}
+      onMouseLeave={() => {
+        mx.set(0);
+        my.set(0);
+      }}
+      style={{ transform }}
+      className="relative mx-auto mt-8 aspect-[16/8] w-full max-w-5xl sm:mt-10 lg:mt-12"
+    >
+      {tiles.map((tile, i) => (
+        <Tile key={i} tile={tile} index={i} ready={ready} mx={sx} my={sy} />
+      ))}
+
+      <div className="absolute -bottom-8 left-0 right-0 flex justify-between gap-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted sm:text-xs">
+        {Array.from({ length: 5 }).map((_, i) => (
+          <motion.span
+            key={i}
+            initial={{ opacity: 0, y: 10 }}
+            animate={ready ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
+            transition={{ delay: 1.25 + i * 0.06, duration: 0.5 }}
+          >
+            Scroll Down
+          </motion.span>
+        ))}
+      </div>
     </motion.div>
   );
 }

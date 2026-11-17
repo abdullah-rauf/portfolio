@@ -1,59 +1,54 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { CodeXml, Cpu, Globe, MapPin } from "lucide-react";
-import { aboutHighlights, personal } from "@/constants";
-import { SectionHeading } from "@/components/ui";
+import { personal } from "@/constants";
+import { Reveal, RevealText } from "@/components/motion";
+import AboutVisual from "./AboutVisual";
 
-const highlightIcons = {
-  code: CodeXml,
-  globe: Globe,
-  cpu: Cpu,
-} as const;
+const bodyLines = [
+  "A passionate staff software engineer focused on seamless user experiences and clean, efficient systems.",
+  "I specialize in bringing web applications to life with React, Next.js, TypeScript, Node.js/NestJS, and thoughtful AI integrations — from idea to production.",
+];
 
 export default function About() {
   return (
-    <section id="about" className="relative mx-auto max-w-6xl scroll-mt-24 px-6 py-28">
-      <SectionHeading eyebrow="About Me" title="Who I Am" />
+    <section id="about" className="layout-pad py-24 sm:py-32">
+      <div className="mx-auto grid max-w-[1400px] gap-14 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:gap-20">
+        <div>
+          <RevealText
+            as="h2"
+            text={`Hey, My name's\n${personal.name}!`}
+            mode="lines"
+            stagger={0.12}
+            className="font-display text-4xl leading-[1.05] tracking-tight sm:text-5xl md:text-6xl"
+            style={{ fontWeight: 700 }}
+          />
 
-      <div className="grid gap-12 md:grid-cols-2">
-        <motion.div
-          initial={{ opacity: 0, x: -50 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-        >
-          <p className="text-lg leading-relaxed text-muted">{personal.summary}</p>
-          <div className="mt-6 flex items-center gap-2 text-sm text-muted">
-            <MapPin size={16} className="text-accent" />
-            {personal.location}
+          <Reveal delay={0.15} y={30} className="mt-8 max-w-xl">
+            <p className="text-base italic leading-relaxed text-muted sm:text-lg">
+              “{personal.summary}”
+            </p>
+          </Reveal>
+
+          <div className="mt-10 max-w-xl space-y-4 text-sm leading-relaxed text-foreground/85 sm:text-base">
+            {bodyLines.map((line, i) => (
+              <Reveal key={line} delay={0.1 + i * 0.08} y={24}>
+                <p>{line}</p>
+              </Reveal>
+            ))}
           </div>
-        </motion.div>
-
-        <div className="flex flex-col gap-4">
-          {aboutHighlights.map((item, i) => {
-            const Icon = highlightIcons[item.icon];
-            return (
-            <motion.div
-              key={item.title}
-              initial={{ opacity: 0, x: 50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, margin: "-100px" }}
-              transition={{ duration: 0.7, delay: i * 0.15, ease: [0.22, 1, 0.36, 1] }}
-              whileHover={{ x: -6 }}
-              className="glass flex items-start gap-4 rounded-2xl p-5"
-            >
-              <span className="rounded-xl bg-accent/10 p-3 text-accent">
-                <Icon size={22} />
-              </span>
-              <div>
-                <h3 className="font-semibold">{item.title}</h3>
-                <p className="mt-1 text-sm text-muted">{item.text}</p>
-              </div>
-            </motion.div>
-            );
-          })}
         </div>
+
+        <Reveal y={60} amount={0.2}>
+          <motion.div
+            initial={{ clipPath: "inset(12% 12% 12% 12% round 24px)" }}
+            whileInView={{ clipPath: "inset(0% 0% 0% 0% round 16px)" }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <AboutVisual />
+          </motion.div>
+        </Reveal>
       </div>
     </section>
   );
